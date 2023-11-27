@@ -1,3 +1,5 @@
+// connection.js
+
 const mongoose = require('mongoose');
 
 // Replace "YOUR_MONGODB_URI" with your actual MongoDB connection URI
