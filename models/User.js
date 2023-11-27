@@ -1,23 +1,49 @@
-const mongoose = require('mongoose');
+// Importing required modules
+const mongoose = require('mongoose'); // MongoDB library
+const moment = require('moment'); // Date and time library
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  // Add other fields as needed for your user model
+// Defining the User schema
+const UserSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/.+@.+\..+/] // Email validation regex
+    },
+    thoughts: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Thought' // Reference to the Thought model
+        }
+    ],
+    friends: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User' // Reference to the User model
+        }
+    ]
+},
+    {
+        toJSON: {
+            virtuals: true
+        },
+        id: false
+    }
+);
+
+// Virtual property to get the count of friends
+UserSchema.virtual('friendCount').get(function () {
+    return this.friends.length;
 });
 
-const User = mongoose.model('User', userSchema);
+// Creating the User model
+const User = mongoose.model('User', UserSchema);
 
+// Exporting the User model
 module.exports = User;

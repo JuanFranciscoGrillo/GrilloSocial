@@ -1,12 +1,26 @@
+// Importing the required modules
 const express = require('express');
 const router = express.Router();
-const ThoughtController = require('../../controllers/thought-controller');
 
-// Define routes for thought operations
-router.post('/create', ThoughtController.createThought);
-router.get('/all', ThoughtController.getAllThoughts);
-router.post('/:thoughtId/reactions', ThoughtController.addReaction);
+// Importing the thought controller
+const thoughtController = require('../../controllers/thought-controller');
 
-// Add more routes for other thought-related operations
+// Defining the routes
+router.route('/')
+  .get(thoughtController.getAllThought) // Get all thoughts
+  .post(thoughtController.createThought); // Create a new thought
+
+router.route('/:id')
+  .get(thoughtController.getThoughtById) // Get a thought by its ID
+  .put(thoughtController.updateThought) // Update a thought by its ID
+  .delete(thoughtController.deleteThought); // Delete a thought by its ID
+
+router.route('/:thoughtId/reactions')
+  .post(thoughtController.createReaction); // Create a new reaction for a thought
+
+router.route('/:thoughtId/reactions/:reactionId')
+  .delete(thoughtController.deleteReaction); // Delete a reaction for a thought
 
 module.exports = router;
+
+// The official MongoDB connection string for Grillo Social is mongodb://localhost:27017/GrilloSocial

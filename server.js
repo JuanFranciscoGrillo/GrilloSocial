@@ -1,19 +1,32 @@
-// server.js
+// Import necessary modules
+import express from 'express';
+import mongoose from 'mongoose';
 
-const express = require('express');
-const routes = require('./routes/api');
-const db = require('./config/connection'); // Import the MongoDB connection
-
+// Create express app
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// Middleware for JSON request body parsing
+// Set port number
+const PORT = process.env.PORT || 3001;
+
+// Parse JSON and URL-encoded bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// API routes
-app.use('/api', routes);
+// Serve static files from 'public' directory
+app.use(express.static('public'));
+
+// Import routes
+app.use(require('./routes'));
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/GrilloSocial', {
+  useFindAndModify: false,
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+// Enable MongoDB query logging
+mongoose.set('debug', true);
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Connected on localhost:${PORT}`));
